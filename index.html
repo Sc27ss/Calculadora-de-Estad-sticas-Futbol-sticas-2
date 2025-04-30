@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Estadísticas de Fútbol</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1 class="title">Calculadora de Estadísticas de Fútbol</h1>
+        <p class="subtitle">Analiza el rendimiento de equipos y jugadores con métricas avanzadas</p>
+    </header>
+    
+    <main>
+        <section class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="stats">Estadísticas Individuales</button>
+                <button class="tab-btn" data-tab="comparison">Comparativa de Equipos</button>
+            </div>
+            
+            <div class="tab-content active" id="stats-tab">
+                <div class="form-container">
+                    <h2>Calculadora de Estadísticas</h2>
+                    <form id="stats-form">
+                        <div class="input-group">
+                            <label for="team-name">Nombre del Equipo:</label>
+                            <input type="text" id="team-name" placeholder="Ej. Barcelona" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="team-color">Color del Equipo:</label>
+                            <div class="color-picker">
+                                <input type="color" id="team-color" value="#0066FF">
+                                <div class="color-preview" id="color-preview"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="matches-played">🎮 Partidos Jugados:</label>
+                            <input type="number" id="matches-played" min="1" placeholder="Ej. 10" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="goals-scored">⚽ Goles a Favor:</label>
+                            <input type="number" id="goals-scored" min="0" placeholder="Ej. 15" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="goals-conceded">🥅 Goles en Contra:</label>
+                            <input type="number" id="goals-conceded" min="0" placeholder="Ej. 5" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="shots-taken">🎯 Tiros Totales:</label>
+                            <input type="number" id="shots-taken" min="0" placeholder="Ej. 50" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="shots-on-target">🎯 Tiros al Arco:</label>
+                            <input type="number" id="shots-on-target" min="0" placeholder="Ej. 25" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="yellow-cards">🟨 Tarjetas Amarillas:</label>
+                            <input type="number" id="yellow-cards" min="0" placeholder="Ej. 10" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="red-cards">🟥 Tarjetas Rojas:</label>
+                            <input type="number" id="red-cards" min="0" placeholder="Ej. 1" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="possession">⏰ Posesión Promedio (%):</label>
+                            <input type="number" id="possession" min="0" max="100" placeholder="Ej. 55" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="distance">🏃‍♂️ Distancia Recorrida (km):</label>
+                            <input type="number" id="distance" min="0" step="0.1" placeholder="Ej. 105.5" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="minutes-played">⏰ Minutos Jugados:</label>
+                            <input type="number" id="minutes-played" min="0" placeholder="Ej. 900" required>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" id="calculate-btn" class="primary-btn">
+                                <i class="fas fa-calculator"></i> 🚀 Calcular Estadísticas
+                            </button>
+                            <button type="reset" id="reset-btn" class="secondary-btn">
+                                <i class="fas fa-redo"></i> 🔄 Reiniciar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-content" id="comparison-tab">
+                <div class="form-container">
+                    <h2>Comparativa de Equipos</h2>
+                    <form id="comparison-form">
+                        <div class="comparison-grid">
+                            <div class="team-column">
+                                <h3>Equipo A</h3>
+                                <div class="input-group">
+                                    <label for="team-a-name">Nombre del Equipo A:</label>
+                                    <input type="text" id="team-a-name" placeholder="Ej. Barcelona" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-color">Color del Equipo A:</label>
+                                    <div class="color-picker">
+                                        <input type="color" id="team-a-color" value="#0066FF">
+                                        <div class="color-preview" id="color-preview-a"></div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-matches">Partidos Jugados:</label>
+                                    <input type="number" id="team-a-matches" min="1" placeholder="Ej. 10" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-goals-scored">Goles a Favor:</label>
+                                    <input type="number" id="team-a-goals-scored" min="0" placeholder="Ej. 15" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-goals-conceded">Goles en Contra:</label>
+                                    <input type="number" id="team-a-goals-conceded" min="0" placeholder="Ej. 5" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-shots-taken">Tiros Totales:</label>
+                                    <input type="number" id="team-a-shots-taken" min="0" placeholder="Ej. 50" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-shots-on-target">Tiros al Arco:</label>
+                                    <input type="number" id="team-a-shots-on-target" min="0" placeholder="Ej. 25" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-a-possession">Promedio de Posesión (%):</label>
+                                    <input type="number" id="team-a-possession" min="0" max="100" placeholder="Ej. 55" required>
+                                </div>
+                            </div>
+
+                            <div class="team-column">
+                                <h3>Equipo B</h3>
+                                <div class="input-group">
+                                    <label for="team-b-name">Nombre del Equipo B:</label>
+                                    <input type="text" id="team-b-name" placeholder="Ej. Real Madrid" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-color">Color del Equipo B:</label>
+                                    <div class="color-picker">
+                                        <input type="color" id="team-b-color" value="#FF0000">
+                                        <div class="color-preview" id="color-preview-b"></div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-matches">Partidos Jugados:</label>
+                                    <input type="number" id="team-b-matches" min="1" placeholder="Ej. 10" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-goals-scored">Goles a Favor:</label>
+                                    <input type="number" id="team-b-goals-scored" min="0" placeholder="Ej. 15" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-goals-conceded">Goles en Contra:</label>
+                                    <input type="number" id="team-b-goals-conceded" min="0" placeholder="Ej. 5" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-shots-taken">Tiros Totales:</label>
+                                    <input type="number" id="team-b-shots-taken" min="0" placeholder="Ej. 50" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-shots-on-target">Tiros al Arco:</label>
+                                    <input type="number" id="team-b-shots-on-target" min="0" placeholder="Ej. 25" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="team-b-possession">Promedio de Posesión (%):</label>
+                                    <input type="number" id="team-b-possession" min="0" max="100" placeholder="Ej. 55" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" id="compare-btn" class="primary-btn">
+                                <i class="fas fa-exchange-alt"></i> 🏆 Comparar Equipos
+                            </button>
+                            <button type="reset" id="compare-reset-btn" class="secondary-btn">
+                                <i class="fas fa-redo"></i> 🔄 Reiniciar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-container" id="results-section">
+            <div class="hero-banner">
+                <h2>Resultados del Análisis</h2>
+                <div class="team-info">
+                    <div class="team-badge" id="team-badge">
+                        <span id="team-initial">?</span>
+                    </div>
+                    <div class="team-name" id="result-team-name">Nombre del Equipo</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-futbol"></i></div>
+                    <div class="stat-content">
+                        <h3>⚽ Goles Esperados (xG)</h3>
+                        <p class="stat-value" id="xg-value">0.00</p>
+                    </div>
+                </div>
+
+                <!-- Más stat cards aquí... -->
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-card">
+                    <h3>📊 Distribución de Estadísticas</h3>
+                    <canvas id="stats-chart"></canvas>
+                </div>
+            </div>
+
+            <div id="goal-alert" class="goal-alert">
+                <div class="goal-text">🥅 ¡GOOOL! 🎯</div>
+                <div class="ball-animation"></div>
+            </div>
+        </section>
+
+        <section class="comparison-results" id="comparison-results">
+            <h2>Comparativa de Equipos</h2>
+            <div class="comparison-header">
+                <div class="team-pill" id="team-a-pill">
+                    <div class="team-color-dot" id="team-a-dot"></div>
+                    <span id="comp-team-a-name">Equipo A</span>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="team-pill" id="team-b-pill">
+                    <div class="team-color-dot" id="team-b-dot"></div>
+                    <span id="comp-team-b-name">Equipo B</span>
+                </div>
+            </div>
+
+            <div class="comparison-charts">
+                <div class="chart-card">
+                    <h3>⚽ Comparativa de Goles</h3>
+                    <canvas id="goals-comparison-chart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>🎯 Precisión de Tiros</h3>
+                    <canvas id="shots-comparison-chart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>⏱️ Posesión</h3>
+                    <canvas id="possession-comparison-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="comparison-summary">
+                <h3>📝 Resumen del Análisis</h3>
+                <div class="summary-text" id="comparison-summary-text">
+                    Selecciona dos equipos y calcula sus estadísticas para ver un análisis comparativo detallado.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="trophy-container">
+        <div class="trophy-title">🏆 Estadísticas del Fútbol 🏆</div>
+        <div class="trophy-content">
+            <div class="trophy-image">
+                <img src="{{ url_for('static', filename='images/trophy.svg') }}" alt="Trofeo de fútbol">
+            </div>
+            <div class="trophy-text">
+                <p>Las estadísticas avanzadas son esenciales en el fútbol moderno. Utilizando datos como goles esperados (xG), 
+                posesión y distancia recorrida, los equipos pueden mejorar su rendimiento y estrategia.</p>
+                <p>¡Esta herramienta te permite calcular métricas profesionales para cualquier equipo o jugador!</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="disclaimer">
+            Esta herramienta está hecha con fines deportivos, educativos y estadísticos. No debe usarse para apuestas.
+        </div>
+        <div class="creator">
+            Creado por Santiago Carvajal M. © 2025
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
